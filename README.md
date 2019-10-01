@@ -1,4 +1,5 @@
 # mysqlHW
+## GONNA UPDATE README MORE LATER OK? JEEZ
 
 SQL CS bootcamp homework with Node
 
