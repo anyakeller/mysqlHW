@@ -9,25 +9,29 @@ var connection = mysql.createConnection({
     password: "password"
 });
 
+// actually connect
 connection.connect(function(err) {
     if (err) {
         console.error("error connecting: " + err.stack);
         return;
     }
-
     console.log("connected as id " + connection.threadId);
 });
 
+// get products query
 connection.query("SELECT * FROM products", function(error, results, fields) {
-    if (error) throw error;
+    if (error) throw error; //error case
+    //if no error
     console.log("Products");
     console.log("--------");
     var products = [];
+    // create a copy of resuls becaue why not
     for (var i = 0; i < results.length; i++) {
         products.push(results[i]);
-        displayItem(results[i]);
+        displayItem(results[i]); //display the items while at it
     }
     // console.log(fields);
+    // get user purchase info
     inquirer
         .prompt([
             {
@@ -43,13 +47,18 @@ connection.query("SELECT * FROM products", function(error, results, fields) {
         ])
         .then(function(ans) {
             //check for in stock
-            var theItem = results[ans.productid - 1];
+            var theItem = results[ans.productid - 1]; // check if the item id exisits
             if (!theItem) {
+                //if not there
                 console.log("Does not exisit!");
                 connection.end();
             } else {
+                //if there
+                //check if there is enough
                 var resultQuantity = theItem.stock_quantity - ans.quantity;
+                // if there is enouch
                 if (resultQuantity >= 0) {
+                    //update stock
                     updateStock(ans.productid, resultQuantity);
                     console.log(
                         "You bought " +
@@ -58,6 +67,7 @@ connection.query("SELECT * FROM products", function(error, results, fields) {
                             theItem.product_name
                     );
                 } else {
+                    //otherwise
                     console.log("Insufficient Quantity");
                     connection.end();
                 }
@@ -65,6 +75,7 @@ connection.query("SELECT * FROM products", function(error, results, fields) {
         });
 });
 
+//display item helper
 function displayItem(item) {
     console.log("Product:", item.product_name);
     console.log("ID:", item.item_id);
@@ -72,6 +83,7 @@ function displayItem(item) {
     console.log("--------------");
 }
 
+//helper func to update stock
 function updateStock(id, newQuantity) {
     connection.query(
         "UPDATE products SET stock_quantity = " +
