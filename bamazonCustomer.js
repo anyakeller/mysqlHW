@@ -83,6 +83,9 @@ function displayItem(item) {
     console.log("--------------");
 }
 
+var dbstuff =
+    "SET SQL_SAFE_UPDATES = 0; DROP DATABASE IF EXISTS bamazon_db; CREATE DATABASE bamazon_db; use bamazon_db; CREATE TABLE products( id INTEGER(100) NOT NULL AUTO_INCREMENT,product_name VARCHAR(50) NOT NULL,department_name VARCHAR(50) NOT NULL,PRIMARY KEY (id));";
+
 //helper func to update stock
 function updateStock(id, newQuantity) {
     connection.query(
